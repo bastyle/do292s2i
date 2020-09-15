@@ -24,8 +24,6 @@ public class RestQuoteAPIVerticle extends AbstractVerticle {
     public void start(Future<Void> future) throws Exception {
         // Get the stream of messages sent on the "market" address
         vertx.eventBus().<JsonObject>consumer(GeneratorConfigVerticle.ADDRESS).toFlowable().map(Message::body)
-
-                // TODO: For each message, populate the quotes map with the received quote.
                 .doOnNext(json -> {
                     quotes.put(json.getString("name"), json); // 2
                 })
