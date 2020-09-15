@@ -42,13 +42,16 @@ public class GeneratorConfigVerticle extends AbstractVerticle {
 
                     // Deploy the verticle with a configuration
                     // TODO: MarketDataVerticle
+                    .flatMapSingle(company -> vertx.rxDeployVerticle(MarketDataVerticle.class.getName(),
+                            new DeploymentOptions().setConfig(company)))
 
                     .toList()
             )
 
             // Deploy another verticle
             // TODO: RestQuoteAPIVerticle
-
+            .flatMap(l -> vertx.rxDeployVerticle(RestQuoteAPIVerticle.class.getName()))
+            
             .flatMap(x -> discovery.rxPublish(MessageSource.createRecord("market-data", ADDRESS)))
 
             .subscribe((rec, err) -> {
